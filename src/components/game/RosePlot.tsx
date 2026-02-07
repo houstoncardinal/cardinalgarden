@@ -11,6 +11,9 @@ const BLOOM_EMOJI: Record<RoseColor, string> = {
   pink: '🌸',
   white: '🤍',
   yellow: '🌻',
+  purple: '🪻',
+  black: '🖤',
+  rainbow: '🌈',
 };
 
 interface Props {

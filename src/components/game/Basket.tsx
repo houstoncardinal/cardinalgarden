@@ -5,6 +5,9 @@ const ROSE_DISPLAY: Record<RoseColor, { emoji: string; label: string }> = {
   pink: { emoji: '🌸', label: 'Pink' },
   white: { emoji: '🤍', label: 'White' },
   yellow: { emoji: '🌻', label: 'Yellow' },
+  purple: { emoji: '🪻', label: 'Purple' },
+  black: { emoji: '🖤', label: 'Black' },
+  rainbow: { emoji: '🌈', label: 'Rainbow' },
 };
 
 interface Props {

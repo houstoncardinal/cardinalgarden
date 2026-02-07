@@ -7,21 +7,25 @@ const TOOLS: { tool: Tool; emoji: string; label: string }[] = [
   { tool: 'scissors', emoji: '✂️', label: 'Trim' },
 ];
 
-const COLORS: { color: RoseColor; emoji: string }[] = [
+const ALL_COLORS: { color: RoseColor; emoji: string }[] = [
   { color: 'red', emoji: '🌹' },
   { color: 'pink', emoji: '🌸' },
   { color: 'white', emoji: '🤍' },
   { color: 'yellow', emoji: '🌻' },
+  { color: 'purple', emoji: '🪻' },
+  { color: 'black', emoji: '🖤' },
+  { color: 'rainbow', emoji: '🌈' },
 ];
 
 interface Props {
   selectedTool: Tool;
   selectedColor: RoseColor;
+  unlockedColors: RoseColor[];
   onSelectTool: (tool: Tool) => void;
   onSelectColor: (color: RoseColor) => void;
 }
 
-export function Toolbar({ selectedTool, selectedColor, onSelectTool, onSelectColor }: Props) {
+export function Toolbar({ selectedTool, selectedColor, unlockedColors, onSelectTool, onSelectColor }: Props) {
   return (
     <div className="flex flex-wrap items-center gap-3">
       <div className="flex items-center gap-1 bg-card rounded-xl p-1.5 shadow-md border border-border">
@@ -44,7 +48,7 @@ export function Toolbar({ selectedTool, selectedColor, onSelectTool, onSelectCol
 
       {selectedTool === 'plant' && (
         <div className="flex items-center gap-1 bg-card rounded-xl p-1.5 shadow-md border border-border animate-bounce-in">
-          {COLORS.map(({ color, emoji }) => (
+          {ALL_COLORS.filter(({ color }) => unlockedColors.includes(color)).map(({ color, emoji }) => (
             <button
               key={color}
               onClick={() => onSelectColor(color)}
