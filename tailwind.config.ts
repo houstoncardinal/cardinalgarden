@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        display: ['"Playfair Display"', 'serif'],
+        body: ['"Nunito"', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -47,6 +51,18 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        rose: {
+          red: "hsl(var(--rose-red))",
+          pink: "hsl(var(--rose-pink))",
+          white: "hsl(var(--rose-white))",
+          yellow: "hsl(var(--rose-yellow))",
+        },
+        garden: {
+          light: "hsl(var(--garden-light))",
+          dark: "hsl(var(--garden-dark))",
+        },
+        soil: "hsl(var(--soil))",
+        water: "hsl(var(--water))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
