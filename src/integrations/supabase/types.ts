@@ -14,7 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      donations: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          donor_name: string | null
+          id: string
+          stripe_session_id: string | null
+          trees_planted: number
+        }
+        Insert: {
+          amount_cents?: number
+          created_at?: string
+          donor_name?: string | null
+          id?: string
+          stripe_session_id?: string | null
+          trees_planted?: number
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          donor_name?: string | null
+          id?: string
+          stripe_session_id?: string | null
+          trees_planted?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
