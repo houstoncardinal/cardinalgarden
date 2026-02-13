@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useGarden } from '@/hooks/useGarden';
 import { useSound } from '@/hooks/useSound';
+import { useTreeTracker } from '@/hooks/useTreeTracker';
 import { GardenGrid } from '@/components/game/GardenGrid';
 import { Toolbar } from '@/components/game/Toolbar';
 import { Basket } from '@/components/game/Basket';
@@ -8,6 +9,7 @@ import { HelpPanel } from '@/components/game/HelpPanel';
 import { WeatherEffects } from '@/components/game/WeatherEffects';
 import { Shop } from '@/components/game/Shop';
 import { BouquetBuilder } from '@/components/game/BouquetBuilder';
+import { DonationPanel } from '@/components/game/DonationPanel';
 
 const WEATHER_LABELS: Record<string, string> = {
   clear: '🌤️ Clear',
@@ -30,8 +32,10 @@ const Index = () => {
   } = useGarden();
 
   const sound = useSound();
+  const { totalTrees } = useTreeTracker();
   const [showShop, setShowShop] = useState(false);
   const [showBouquet, setShowBouquet] = useState(false);
+  const [showDonate, setShowDonate] = useState(false);
 
   const handlePlotClickWithSound = (index: number) => {
     const plot = state.plots[index];
@@ -60,6 +64,10 @@ const Index = () => {
             <span className="bg-muted rounded-full px-3 py-1 font-body text-xs text-muted-foreground">
               {WEATHER_LABELS[state.weather]}
             </span>
+            <button onClick={() => setShowDonate(true)} className="flex items-center gap-1 bg-primary/20 rounded-full px-3 py-1.5 hover:bg-primary/30 transition-colors">
+              <span className="text-sm">🌳</span>
+              <span className="font-body font-bold text-sm text-primary">{totalTrees}</span>
+            </button>
             <div className="flex items-center gap-1 bg-accent/30 rounded-full px-3 py-1.5">
               <span className="text-sm">🪙</span>
               <span className="font-body font-bold text-sm text-accent-foreground">{state.coins}</span>
@@ -153,6 +161,10 @@ const Index = () => {
           onCreateBouquet={createBouquet}
           onClose={() => setShowBouquet(false)}
         />
+      )}
+
+      {showDonate && (
+        <DonationPanel onClose={() => setShowDonate(false)} />
       )}
     </div>
   );
