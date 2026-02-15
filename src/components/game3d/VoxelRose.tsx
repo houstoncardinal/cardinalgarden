@@ -1,7 +1,7 @@
 import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import type { RosePlot, RoseColor, GrowthStage } from '@/types/garden';
+import type { RosePlot, RoseColor } from '@/types/garden';
 
 const ROSE_COLORS: Record<RoseColor, string> = {
   red: '#DC143C',
@@ -13,54 +13,85 @@ const ROSE_COLORS: Record<RoseColor, string> = {
   rainbow: '#FF6B6B',
 };
 
-const STEM_COLOR = new THREE.Color('#2E8B38');
-const LEAF_COLOR = new THREE.Color('#228B22');
+const STEM_COLOR = '#2E8B38';
+const LEAF_COLOR = '#228B22';
 
-function VoxelSeed({ color }: { color: string }) {
+function VoxelSeed() {
+  const ref = useRef<THREE.Group>(null);
+  useFrame(({ clock }) => {
+    if (ref.current) ref.current.position.y = 0.15 + Math.sin(clock.getElapsedTime() * 2) * 0.02;
+  });
   return (
-    <group>
-      <mesh position={[0, 0.15, 0]} castShadow>
-        <boxGeometry args={[0.3, 0.3, 0.3]} />
-        <meshLambertMaterial color="#8B6914" />
+    <group ref={ref}>
+      <mesh position={[0, 0, 0]} castShadow>
+        <boxGeometry args={[0.25, 0.25, 0.25]} />
+        <meshStandardMaterial color="#8B6914" roughness={0.8} />
+      </mesh>
+      {/* Tiny sprout hint */}
+      <mesh position={[0, 0.18, 0]} castShadow>
+        <boxGeometry args={[0.08, 0.1, 0.08]} />
+        <meshStandardMaterial color="#4CAF50" roughness={0.7} />
       </mesh>
     </group>
   );
 }
 
 function VoxelSprout({ color }: { color: string }) {
+  const ref = useRef<THREE.Group>(null);
+  useFrame(({ clock }) => {
+    if (ref.current) ref.current.rotation.z = Math.sin(clock.getElapsedTime() * 1.5) * 0.05;
+  });
   return (
-    <group>
-      <mesh position={[0, 0.25, 0]} castShadow>
-        <boxGeometry args={[0.15, 0.5, 0.15]} />
-        <meshLambertMaterial color={STEM_COLOR} />
+    <group ref={ref}>
+      <mesh position={[0, 0.3, 0]} castShadow>
+        <boxGeometry args={[0.12, 0.6, 0.12]} />
+        <meshStandardMaterial color={STEM_COLOR} roughness={0.7} />
       </mesh>
-      <mesh position={[0.15, 0.4, 0]} castShadow>
-        <boxGeometry args={[0.2, 0.15, 0.1]} />
-        <meshLambertMaterial color={LEAF_COLOR} />
+      <mesh position={[0.18, 0.4, 0]} castShadow rotation={[0, 0, 0.3]}>
+        <boxGeometry args={[0.22, 0.12, 0.08]} />
+        <meshStandardMaterial color={LEAF_COLOR} roughness={0.6} />
+      </mesh>
+      <mesh position={[-0.15, 0.5, 0.05]} castShadow rotation={[0, 0, -0.2]}>
+        <boxGeometry args={[0.18, 0.1, 0.07]} />
+        <meshStandardMaterial color="#1e7e1e" roughness={0.6} />
       </mesh>
     </group>
   );
 }
 
 function VoxelBud({ color }: { color: string }) {
+  const ref = useRef<THREE.Group>(null);
+  useFrame(({ clock }) => {
+    if (ref.current) {
+      ref.current.rotation.z = Math.sin(clock.getElapsedTime() * 1.2) * 0.03;
+      // Subtle "breathing" scale on the bud
+      const scale = 1 + Math.sin(clock.getElapsedTime() * 2) * 0.03;
+      ref.current.scale.set(scale, scale, scale);
+    }
+  });
   return (
-    <group>
-      <mesh position={[0, 0.35, 0]} castShadow>
-        <boxGeometry args={[0.15, 0.7, 0.15]} />
-        <meshLambertMaterial color={STEM_COLOR} />
+    <group ref={ref}>
+      <mesh position={[0, 0.4, 0]} castShadow>
+        <boxGeometry args={[0.12, 0.8, 0.12]} />
+        <meshStandardMaterial color={STEM_COLOR} roughness={0.7} />
       </mesh>
-      <mesh position={[0.2, 0.45, 0]} castShadow>
-        <boxGeometry args={[0.25, 0.2, 0.12]} />
-        <meshLambertMaterial color={LEAF_COLOR} />
+      {/* Leaves */}
+      <mesh position={[0.22, 0.45, 0]} castShadow rotation={[0, 0, 0.4]}>
+        <boxGeometry args={[0.28, 0.15, 0.1]} />
+        <meshStandardMaterial color={LEAF_COLOR} roughness={0.6} />
       </mesh>
-      <mesh position={[-0.2, 0.55, 0]} castShadow>
-        <boxGeometry args={[0.25, 0.2, 0.12]} />
-        <meshLambertMaterial color={LEAF_COLOR} />
+      <mesh position={[-0.2, 0.6, 0.05]} castShadow rotation={[0.1, 0, -0.3]}>
+        <boxGeometry args={[0.25, 0.13, 0.09]} />
+        <meshStandardMaterial color="#1a6b1a" roughness={0.6} />
       </mesh>
-      {/* Closed bud */}
-      <mesh position={[0, 0.8, 0]} castShadow>
-        <boxGeometry args={[0.3, 0.25, 0.3]} />
-        <meshLambertMaterial color={color} />
+      {/* Bud with glow */}
+      <mesh position={[0, 0.9, 0]} castShadow>
+        <boxGeometry args={[0.3, 0.3, 0.3]} />
+        <meshStandardMaterial color={color} roughness={0.4} emissive={color} emissiveIntensity={0.15} />
+      </mesh>
+      <mesh position={[0, 0.9, 0]}>
+        <boxGeometry args={[0.35, 0.35, 0.35]} />
+        <meshStandardMaterial color={color} transparent opacity={0.15} />
       </mesh>
     </group>
   );
@@ -68,69 +99,98 @@ function VoxelBud({ color }: { color: string }) {
 
 function VoxelBloom({ color, isRainbow }: { color: string; isRainbow: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
+  const glowRef = useRef<THREE.PointLight>(null);
 
   useFrame(({ clock }) => {
     if (groupRef.current) {
-      groupRef.current.rotation.y = Math.sin(clock.getElapsedTime() * 0.5) * 0.1;
+      groupRef.current.rotation.y = Math.sin(clock.getElapsedTime() * 0.4) * 0.15;
+      groupRef.current.position.y = Math.sin(clock.getElapsedTime() * 0.8) * 0.02;
+    }
+    if (glowRef.current && isRainbow) {
+      const hue = (clock.getElapsedTime() * 0.1) % 1;
+      glowRef.current.color.setHSL(hue, 0.8, 0.6);
     }
   });
 
   const petalColor = useMemo(() => {
-    if (isRainbow) return new THREE.Color().setHSL(Math.random(), 0.8, 0.6);
     return new THREE.Color(color);
-  }, [color, isRainbow]);
+  }, [color]);
 
   return (
     <group ref={groupRef}>
-      {/* Stem */}
-      <mesh position={[0, 0.5, 0]} castShadow>
-        <boxGeometry args={[0.15, 1, 0.15]} />
-        <meshLambertMaterial color={STEM_COLOR} />
+      {/* Stem with thorns */}
+      <mesh position={[0, 0.55, 0]} castShadow>
+        <boxGeometry args={[0.12, 1.1, 0.12]} />
+        <meshStandardMaterial color={STEM_COLOR} roughness={0.7} />
       </mesh>
-      {/* Leaves */}
-      <mesh position={[0.25, 0.5, 0]} castShadow>
-        <boxGeometry args={[0.3, 0.2, 0.12]} />
-        <meshLambertMaterial color={LEAF_COLOR} />
-      </mesh>
-      <mesh position={[-0.25, 0.65, 0]} castShadow>
-        <boxGeometry args={[0.3, 0.2, 0.12]} />
-        <meshLambertMaterial color={LEAF_COLOR} />
-      </mesh>
-      {/* Flower - voxel cross pattern */}
-      <mesh position={[0, 1.1, 0]} castShadow>
-        <boxGeometry args={[0.4, 0.35, 0.4]} />
-        <meshLambertMaterial color={petalColor} />
-      </mesh>
-      {[[-0.35, 0], [0.35, 0], [0, -0.35], [0, 0.35]].map(([dx, dz], i) => (
-        <mesh key={i} position={[dx, 1.05, dz]} castShadow>
-          <boxGeometry args={[0.25, 0.25, 0.25]} />
-          <meshLambertMaterial color={petalColor} />
+      {/* Thorns */}
+      {[0.3, 0.5, 0.7].map((y, i) => (
+        <mesh key={i} position={[0.1 * (i % 2 === 0 ? 1 : -1), y, 0]} castShadow>
+          <boxGeometry args={[0.06, 0.06, 0.06]} />
+          <meshStandardMaterial color="#1a5c1a" roughness={0.6} />
         </mesh>
       ))}
-      {/* Center */}
-      <mesh position={[0, 1.2, 0]} castShadow>
-        <boxGeometry args={[0.2, 0.15, 0.2]} />
-        <meshLambertMaterial color="#FFD700" />
+      {/* Leaves */}
+      <mesh position={[0.25, 0.5, 0]} castShadow rotation={[0, 0, 0.3]}>
+        <boxGeometry args={[0.3, 0.18, 0.1]} />
+        <meshStandardMaterial color={LEAF_COLOR} roughness={0.6} />
       </mesh>
+      <mesh position={[-0.25, 0.7, 0.05]} castShadow rotation={[0.1, 0, -0.25]}>
+        <boxGeometry args={[0.28, 0.16, 0.09]} />
+        <meshStandardMaterial color="#1e6e1e" roughness={0.6} />
+      </mesh>
+      {/* Flower head - multi-layer petals */}
+      <mesh position={[0, 1.15, 0]} castShadow>
+        <boxGeometry args={[0.45, 0.35, 0.45]} />
+        <meshStandardMaterial color={petalColor} roughness={0.3} emissive={petalColor} emissiveIntensity={0.2} />
+      </mesh>
+      {/* Outer petals */}
+      {[
+        [-0.35, 0, 0], [0.35, 0, 0], [0, 0, -0.35], [0, 0, 0.35],
+        [-0.25, 0, -0.25], [0.25, 0, -0.25], [-0.25, 0, 0.25], [0.25, 0, 0.25],
+      ].map(([dx, _, dz], i) => (
+        <mesh key={i} position={[dx, 1.1, dz]} castShadow>
+          <boxGeometry args={[0.22, 0.22, 0.22]} />
+          <meshStandardMaterial
+            color={petalColor}
+            roughness={0.35}
+            emissive={petalColor}
+            emissiveIntensity={0.15}
+          />
+        </mesh>
+      ))}
+      {/* Center stamen */}
+      <mesh position={[0, 1.35, 0]} castShadow>
+        <boxGeometry args={[0.18, 0.12, 0.18]} />
+        <meshStandardMaterial color="#FFD700" emissive="#FFD700" emissiveIntensity={0.4} roughness={0.3} />
+      </mesh>
+      {/* Glow light */}
+      <pointLight ref={glowRef} position={[0, 1.2, 0]} intensity={0.5} distance={3} color={color} />
     </group>
   );
 }
 
-// Water particles floating above watered plants
 function WaterIndicator() {
-  const ref = useRef<THREE.Mesh>(null);
+  const ref = useRef<THREE.Group>(null);
   useFrame(({ clock }) => {
     if (ref.current) {
-      ref.current.position.y = 1.6 + Math.sin(clock.getElapsedTime() * 3) * 0.1;
-      const mat = ref.current.material as THREE.MeshLambertMaterial;
-      mat.opacity = 0.5 + Math.sin(clock.getElapsedTime() * 2) * 0.3;
+      const t = clock.getElapsedTime();
+      ref.current.children.forEach((child, i) => {
+        child.position.y = 1.5 + Math.sin(t * 3 + i * 1.5) * 0.2;
+        child.position.x = Math.sin(t * 2 + i * 2) * 0.15;
+        child.position.z = Math.cos(t * 2 + i * 2) * 0.15;
+      });
     }
   });
   return (
-    <mesh ref={ref} position={[0, 1.6, 0]}>
-      <boxGeometry args={[0.2, 0.2, 0.2]} />
-      <meshLambertMaterial color="#3498db" transparent opacity={0.6} />
-    </mesh>
+    <group ref={ref}>
+      {[0, 1, 2].map(i => (
+        <mesh key={i} position={[0, 1.5, 0]}>
+          <boxGeometry args={[0.12, 0.12, 0.12]} />
+          <meshStandardMaterial color="#3498db" transparent opacity={0.7} emissive="#3498db" emissiveIntensity={0.3} />
+        </mesh>
+      ))}
+    </group>
   );
 }
 
@@ -146,13 +206,17 @@ export function VoxelRose({ plot, position, isPickingOrWatering }: Props) {
 
   useFrame(({ clock }) => {
     if (groupRef.current && isPickingOrWatering) {
-      groupRef.current.scale.y = 1 + Math.sin(clock.getElapsedTime() * 10) * 0.1;
+      const t = clock.getElapsedTime();
+      groupRef.current.scale.y = 1 + Math.sin(t * 12) * 0.15;
+      groupRef.current.scale.x = 1 + Math.sin(t * 10) * 0.05;
+    } else if (groupRef.current) {
+      groupRef.current.scale.set(1, 1, 1);
     }
   });
 
   return (
     <group ref={groupRef} position={position}>
-      {plot.stage === 'seed' && <VoxelSeed color={color} />}
+      {plot.stage === 'seed' && <VoxelSeed />}
       {plot.stage === 'sprout' && <VoxelSprout color={color} />}
       {plot.stage === 'bud' && <VoxelBud color={color} />}
       {plot.stage === 'bloom' && <VoxelBloom color={color} isRainbow={plot.color === 'rainbow'} />}
