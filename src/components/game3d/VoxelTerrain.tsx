@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -107,7 +107,7 @@ export function VoxelTerrain() {
     return { count, matrices, colors };
   }, []);
 
-  useMemo(() => {
+  useEffect(() => {
     if (!meshRef.current) return;
     const mat = new THREE.Matrix4();
     for (let i = 0; i < count; i++) {
@@ -140,7 +140,7 @@ export function GardenPlots({ plotCount }: { plotCount: number }) {
     });
   }, [plotCount]);
 
-  useMemo(() => {
+  useEffect(() => {
     if (!meshRef.current) return;
     const mat = new THREE.Matrix4();
     const soilColors = [new THREE.Color('#4a2a10'), new THREE.Color('#5B3216'), new THREE.Color('#6a3e20'), new THREE.Color('#3a1e08')];
@@ -234,7 +234,7 @@ export function GrassTufts() {
     return { matrices: mats, colors: cols, actual: idx };
   }, []);
 
-  useMemo(() => {
+  useEffect(() => {
     if (!meshRef.current) return;
     const mat = new THREE.Matrix4();
     for (let i = 0; i < data.actual; i++) {
@@ -454,7 +454,7 @@ export function VoxelFence() {
     return c;
   }, []);
 
-  useMemo(() => {
+  useEffect(() => {
     if (!meshRef.current) return;
     const mat = new THREE.Matrix4();
     const fenceColors = [new THREE.Color('#7a6345'), new THREE.Color('#8B7355'), new THREE.Color('#6a5335')];
